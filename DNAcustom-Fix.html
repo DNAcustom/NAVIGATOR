@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scent Navigator | Personal Curation</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700&family=Montserrat:wght@300;400;500&display=swap');
+
+        :root {
+            --bg: #fdfcfb;
+            --text: #2c2c2c;
+            --accent: #a39081;
+            --validation-color: #1a2a6c; 
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+    	    text-align: center; /* Tambahkan ini */
+	}
+
+        header {
+            text-align: center;
+            padding: 80px 20px 40px;
+            max-width: 700px;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+	/* Memastikan area logo memiliki ruang dan terlihat rapi */
+    .brand-logo {
+        max-width: 180px; /* Sedikit lebih besar agar terlihat jelas */
+        height: auto;
+        display: block;
+        margin: 0 auto 20px auto;
+        min-height: 50px; /* Ruang jaga-jaga agar layout tidak lompat */
+    }
+
+    .sub {
+        font-family: 'Playfair Display', serif;
+        font-style: italic;
+        font-size: 1.1rem;
+        color: #FF0000 !important; /* Paksa warna Merah */
+        font-weight: bold !important; /* Paksa cetak Tebal */
+        letter-spacing: 1px;
+        display: block;
+        margin-top: 10px;
+    }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            width: 90%;
+            max-width: 450px;
+            margin: 40px auto; /* Mengubah 0 menjadi auto agar box grid ke tengah */
+    justify-items: center; /* Memastikan lingkaran di dalam grid ada di tengah */
+}
+
+        .swatch-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .swatch {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            border: 3px solid #d1d1d1; /* Tambahkan ini: Garis tepi halus warna abu-abu */;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.04);
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .swatch-wrapper:hover .swatch {
+            transform: scale(1.1) translateY(-5px);
+        }
+
+        #result-box {
+            margin: 20px 20px 100px;
+            max-width: 750px;
+            background: white;
+            padding: 60px;
+            display: none;
+            box-shadow: 0 30px 100px rgba(0,0,0,0.05);
+            border-top: 4px solid var(--accent);
+        }
+
+        .res-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            margin-bottom: 25px;
+        }
+
+        .res-content {
+            font-size: 1.05rem;
+            line-height: 2;
+            color: #333;
+            margin-bottom: 45px;
+        }
+
+        .res-content {
+    font-size: 1.05rem;
+    line-height: 2;
+    color: #333;
+    margin-bottom: 45px;
+    text-align: justify; /* Membuat tulisan story rata kiri-kanan */
+    text-align-last: left; /* Baris terakhir tetap rata kiri agar tidak aneh */
+}
+
+/* Memastikan elemen header saja yang center */
+header {
+    text-align: center;
+    padding: 60px 20px 20px;
+}
+
+        .validation {
+            color: var(--validation-color);
+            display: block;
+            margin-top: 25px;
+            font-style: italic;
+            font-weight: 500;
+        }
+
+        .cta {
+            display: inline-block;
+            padding: 20px 45px;
+            background: #1a1a1a;
+            color: white;
+            text-decoration: none;
+            font-size: 0.85rem;
+            letter-spacing: 3px;
+            font-weight: 600;
+            transition: 0.4s;
+        }
+
+        .cta:hover { background: var(--accent); }
+
+        .c1 { background-color: #ffffff; } .c2 { background-color: #f4d0d4; } .c3 { background-color: #eec16d; }
+        .c4 { background-color: #4b3f72; } .c5 { background-color: #1f305e; } .c6 { background-color: #606c38; }
+        .c7 { background-color: #f4a261; } .c8 { background-color: #1b1b1b; } .c9 { background-color: #add8e6; }
+
+        @media (max-width: 600px) {
+            .swatch { width: 80px; height: 80px; }
+            #result-box { padding: 40px 25px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+<header>
+  <img src="https://cdn.jsdelivr.net/gh/DNAcustom/NAVIGATOR@main/Logo-DNA onlyU.png" 
+         alt="DNA Logo" 
+         class="brand-logo"
+         onerror="this.onerror=null; this.src='https://raw.githubusercontent.com/DNAcustom/NAVIGATOR/main/Logo-DNA onlyU.png';">
+        <h1>Scent Navigator</h1>
+        <p class="sub">Pilih warna yang paling menarik perhatian Anda.</p>
+    </header>
+
+    <div class="grid">
+        <div class="swatch-wrapper" onclick="reveal('c1')"><div class="swatch c1"></div></div>
+        <div class="swatch-wrapper" onclick="reveal('c2')"><div class="swatch c2"></div></div>
+        <div class="swatch-wrapper" onclick="reveal('c3')"><div class="swatch c3"></div></div>
+        <div class="swatch-wrapper" onclick="reveal('c4')"><div class="swatch c4"></div></div>
+        <div class="swatch-wrapper" onclick="reveal('c5')"><div class="swatch c5"></div></div>
+        <div class="swatch-wrapper" onclick="reveal('c6')"><div class="swatch c6"></div></div>
+        <div class="swatch-wrapper" onclick="reveal('c7')"><div class="swatch c7"></div></div>
+        <div class="swatch-wrapper" onclick="reveal('c8')"><div class="swatch c8"></div></div>
+        <div class="swatch-wrapper" onclick="reveal('c9')"><div class="swatch c9"></div></div>
+    </div>
+
+    <div id="result-box">
+        <div class="res-name" id="title"></div>
+        <div id="full-story" class="res-content"></div>
+        <a id="wa-link" href="#" target="_blank" class="cta">DISKUSI FORMULA</a>
+    </div>
+
+    <script>
+        const scentData = {
+            c1: {
+                name: "The Clarity",
+                story: "Saya melihat Anda adalah tipe yang tidak suka dengan sesuatu yang bertele-tele. Ada kejujuran yang sangat tenang dalam cara Anda menjalani hari, selalu tahu apa yang penting dan apa yang hanya kebisingan. Kadang, standar tinggi yang Anda terapkan membuat Anda sedikit tegang, padahal membiarkan segala sesuatu mengalir apa adanya tanpa kendali ketat bisa menjadi bentuk 'istirahat' yang sebenarnya Anda butuhkan untuk tumbuh lebih jauh. Untuk itu, saya memilihkan sapaan segar dari **Bergamot** dan **Lavender** agar pikiran Anda bisa sedikit lebih santai sejak hirupan pertama. Lalu saya lapisi dengan kelembutan **Jasmine** yang elegan agar kesan profesional Anda tetap terjaga, dan ditutup dengan transparansi modern dari **Ambroxan**. Hasil akhirnya terasa bersih dan menyatu secara modern di kulit Anda tanpa terkesan asing.",
+                valid: "Mungkin warna ini adalah diri Anda yang asli, atau mungkin Anda sedang mencari kejernihan batin—apa pun itu, racikan ini akan menemani langkah Anda dengan sangat rapi.",
+                wa: "The Clarity (Bergamot, Lavender, Jasmine, Ambroxan)"
+            },
+            c2: {
+                name: "Soft Compassion",
+                story: "Bagi Anda, kebahagiaan orang-orang di sekitar seringkali menjadi prioritas utama. Anda punya bakat alami membuat suasana jadi lebih sejuk hanya dengan kehadiran Anda yang hangat. Namun, satu hal yang sering terlupakan: potensi besar Anda akan jauh lebih bersinar saat Anda juga mulai berani membangun batasan yang sehat dan peduli pada kebutuhan diri sendiri. Racikan ini saya buat untuk menjadi pengingat akan hal itu. Saya memadukan kesegaran **Bergamot** dengan inti bunga **Jasmine** yang tulus. Sebagai pemanis yang menyatukan semuanya agar terasa akrab, saya tambahkan sentuhan **Vanilla** dan kehangatan **Sandalwood**. Aroma ini akan terasa sangat nyaman dan membumi—seperti pelukan yang memberikan ketenangan batin.",
+                valid: "Terlepas dari apakah Anda memang selembut ini atau sedang butuh rasa nyaman, aroma ini akan terasa seperti pelukan yang menjaga Anda untuk tetap tenang.",
+                wa: "Soft Compassion (Bergamot, Jasmine, Vanilla, Sandalwood)"
+            },
+            c3: {
+                name: "Quiet Ambition",
+                story: "Anda punya ambisi yang besar, tapi hebatnya, Anda tidak perlu bersuara keras untuk menunjukkan kemampuan Anda. Langkah Anda pasti dan selalu penuh rencana matang. Karisma Anda sebenarnya akan berlipat ganda jika Anda mulai berani menikmati setiap proses kejutan di tengah perjalanan, bukan hanya terpaku pada hasil akhir. Untuk mendukung energi aktif ini, saya menggunakan percikan **Pink Pepper** dan **Bergamot** yang membuka jalan dengan cerdas. Di bagian jantung, saya menyisipkan **Jasmine** dan kemewahan **Sandalwood** untuk memberikan wibawa yang halus. Terakhir, sentuhan **Ambroxan** memastikan Anda meninggalkan jejak yang rapi dan kompeten bagi siapa pun yang bersinggungan dengan Anda.",
+                valid: "Mungkin hari ini Anda sedang mengejar target besar, dan aroma ini dirancang untuk memastikan Anda tetap terlihat kompeten namun tetap memiliki sisi yang fleksibel.",
+                wa: "Quiet Ambition (Pink Pepper, Bergamot, Jasmine, Sandalwood, Ambroxan)"
+            },
+            c4: {
+                name: "Deep Narrative",
+                story: "Anda bukan orang yang suka dengan hal-hal yang terlalu biasa atau umum. Ada kedalaman dan sisi unik dalam cara Anda berpikir yang tidak semua orang bisa langsung paham, dan justru itulah daya tarik utama Anda. Potensi Anda akan semakin terbuka saat Anda mulai lebih berani menunjukkan sisi 'berbeda' ini kepada dunia tanpa keraguan. Untuk karakter yang reflektif ini, saya memadukan **Pink Pepper** dengan keeksotisan **Tuberose** yang berani. Keunikan karakter Anda diperkuat oleh lapisan **Vanilla** yang lembut dan **Patchouli** yang mendalam di bagian dasar. Racikan ini tidak akan terasa asing, melainkan berkembang secara artistik di kulit Anda—selaras dengan kepribadian Anda yang selalu punya cerita baru untuk dibagikan.",
+                valid: "Terlepas dari apakah ini sifat asli Anda atau Anda sedang ingin tampil lebih berkarakter, parfum ini akan berkembang secara unik di kulit Anda, bercerita tentang sesuatu yang mendalam.",
+                wa: "Deep Narrative (Pink Pepper, Tuberose, Vanilla, Patchouli)"
+            },
+            c5: {
+                name: "Logical Focus",
+                story: "Saya melihat Anda sangat mengandalkan logika dan kejernihan berpikir, terutama saat situasi mulai terasa rumit atau emosional. Orang-orang biasanya datang kepada Anda karena Anda stabil dan objektif. Namun, mempercayai intuisi atau insting sesekali mungkin akan memberikan solusi yang jauh lebih cepat daripada data. Racikan ini saya buat sangat terstruktur; diawali dengan ketajaman **Bergamot** dan **Pink Pepper** untuk menjaga pikiran tetap tajam. Kekokohan logika Anda kemudian diwakili oleh kayu **Mahogany** yang megah dan sentuhan **Ambroxan**. Hasil akhirnya terasa dingin, stabil, dan sangat profesional—dirancang khusus untuk mendukung fokus Anda agar tetap tenang di tengah kesibukan apa pun.",
+                valid: "Jika hari ini Anda butuh fokus tinggi atau ingin terlihat sebagai pribadi yang sangat tepercaya dan tenang, kombinasi ini adalah pendukung yang paling tepat.",
+                wa: "Logical Focus (Bergamot, Pink Pepper, Mahogany, Ambroxan)"
+            },
+            c6: {
+                name: "Grounded Loyal",
+                story: "Anda adalah tipe yang sangat setia dan bisa diandalkan dalam kondisi apa pun. Siapa pun yang mengenal Anda pasti tahu bahwa Anda adalah 'jangkar' yang memberikan rasa aman. Potensi Anda akan semakin luas saat Anda mulai memberi izin pada diri sendiri untuk mengeksplorasi perubahan tanpa rasa takut kehilangan jati diri. Untuk Anda, saya memilih sapaan akrab dari **Lavender** dan inti bunga **Jasmine** yang tulus. Untuk memberikan kesan setia yang kokoh, saya menambahkan kekuatan **Patchouli** dan kelembutan **Sandalwood**. Ini adalah aroma yang membumi, seperti aroma tanah setelah hujan yang memberikan rasa aman bagi Anda dan siapa pun di dekat Anda.",
+                valid: "Mungkin Anda memilih ini karena Anda adalah sosok pelindung, atau mungkin Anda sedang mencari rasa aman; aroma ini akan selalu menguatkan ketulusan yang Anda miliki.",
+                wa: "Grounded Loyal (Lavender, Jasmine, Patchouli, Sandalwood)"
+            },
+            c7: {
+                name: "Vivid Escape",
+                story: "Energi Anda selalu menular dan mampu menghidupkan suasana di mana pun Anda berada. Anda paling tidak suka dengan rutinitas yang membosankan dan selalu mencari cara untuk membuat hari jadi lebih berwarna. Jika Anda mampu sedikit lebih fokus pada satu tujuan besar di tengah banyaknya keinginan, pengaruh Anda akan jadi luar biasa. Kegembiraan Anda saya tuangkan melalui keunikan buah **Maninka** yang eksotis, dipadu dengan cerahnya **Bergamot** dan **Pink Pepper**. Sentuhan **Vanilla** di akhir memberikan kesan manis yang menggoda namun tetap segar di kulit. Ini adalah aroma yang bergerak bersama gerak dinamis Anda—segar, cerah, dan penuh semangat positif.",
+                valid: "Terlepas dari rutinitas Anda, biarkan aroma ini menjadi pelarian kecil yang menyalakan kembali semangat positif dalam diri Anda.",
+                wa: "Vivid Escape (Maninka, Bergamot, Pink Pepper, Vanilla)"
+            },
+            c8: {
+                name: "Bold Character",
+                story: "Ada karisma alami yang membuat Anda seringkali dipercaya untuk memimpin atau mengambil kendali. Anda berani mengambil keputusan sulit dan punya prinsip yang sangat kuat. Namun, kepemimpinan Anda akan mencapai puncaknya saat Anda mampu memadukan ketegasan tersebut dengan pendekatan yang lebih luwes dan lembut. Pernyataan diri yang kuat ini saya wakili lewat karakter **Russian Leather** dan kayu **Mahogany** yang megah. Untuk memberikan dimensi yang lebih kaya dan tidak asing, saya menyelipkan **Patchouli** serta percikan **Pink Pepper** dan **Bergamot**. Mewah, berani, dan meninggalkan jejak otoritas yang tak terbantahkan ke mana pun Anda melangkah.",
+                valid: "Jika Anda memilih ini untuk mempertegas posisi Anda atau memang karena menyukai tantangan, parfum ini akan memberikan pernyataan yang jelas tentang siapa Anda.",
+                wa: "Bold Character (Russian Leather, Mahogany, Patchouli, Pink Pepper, Bergamot)"
+            },
+            c9: {
+                name: "Balanced Peace",
+                story: "Anda adalah tipe yang membawa harmoni ke mana pun Anda pergi, karena Anda ahli dalam menyeimbangkan berbagai kepentingan. Ketenangan batin Anda adalah aset, namun jangan sampai Anda mengorbankan keinginan pribadi hanya demi menjaga kedamaian di luar. Mengungkapkan apa yang Anda mau adalah bagian dari pertumbuhan yang sehat. Keseimbangan sejati ini saya ciptakan melalui dialog antara **Bergamot** yang segar dan kelembutan **Tuberose**. Sebagai penyeimbang batin, saya tambahkan ketenangan **Sandalwood** dan transparansi **Ambroxan**. Aromanya terasa sangat harmonis—tidak terlalu bunga, juga tidak terlalu kayu—hanya kedamaian murni yang menyertai Anda.",
+                valid: "Mungkin Anda adalah sang penengah, atau mungkin Anda sedang butuh ketenangan batin; aroma ini dirancang untuk menjaga harmoni tersebut tetap terjaga.",
+                wa: "Balanced Peace (Bergamot, Tuberose, Sandalwood, Ambroxan)"
+            }
+        };
+
+        function reveal(key) {
+            const data = scentData[key];
+            const box = document.getElementById('result-box');
+            box.style.display = 'block';
+            
+            document.getElementById('title').innerText = data.name;
+            
+            let formattedStory = data.story.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+            let formattedValid = `<span class="validation">${data.valid}</span>`;
+            
+            document.getElementById('full-story').innerHTML = formattedStory + formattedValid;
+
+            const phone = "6281288571371"; 
+            const text = encodeURIComponent(`Halo, saya sudah mencoba Scent Navigator dan tertarik ingin punya koleksinya ${data.wa}.`);
+            document.getElementById('wa-link').href = `https://wa.me/${phone}?text=${text}`;
+
+            setTimeout(() => {
+                box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
+        }
+    </script>
+</body>
+</html>
