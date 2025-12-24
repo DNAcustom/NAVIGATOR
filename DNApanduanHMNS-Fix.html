@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HMNS | Soul Scent Navigator</title>
+    <style>
+        :root { 
+            --primary: #1a1a1a; 
+            --accent: #c5a059; 
+            --shopee: #EE4D2D;
+            --bg: #fafafa; 
+        }
+
+        /* Tata letak logo yang presisi */
+        .brand-logo { 
+            width: 140px; 
+            height: auto; 
+            margin: 0 auto 20px; 
+            display: block; 
+        }
+
+        body { font-family: 'Segoe UI', serif; background-color: var(--bg); color: var(--primary); margin: 0; display: flex; justify-content: center; min-height: 100vh; }
+        .container { max-width: 500px; width: 100%; background: white; padding: 2.5rem 1.5rem; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        
+        h1 { font-weight: 700; letter-spacing: 3px; margin: 0.5rem 0; font-size: 1.8rem; text-transform: uppercase; }
+        .subtitle { color: #555; margin-bottom: 2rem; font-size: 1.07rem; line-height: 1.6; }
+        .color-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 2.5rem; }
+        .color-item { cursor: pointer; transition: 0.3s; }
+        .color-circle { width: 50px; height: 50px; border-radius: 50%; margin: 0 auto 8px; border: 2px solid #bbb; box-shadow: 0 3px 8px rgba(0,0,0,0.2); }
+        .color-item.selected .color-circle { transform: scale(1.1); border: 3px solid var(--accent); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        .color-label { font-size: 0.8rem; color: #121212; text-transform: uppercase; }
+        button#find-btn { background: var(--primary); color: white; border: none; padding: 18px; border-radius: 4px; cursor: pointer; width: 100%; font-weight: bold; letter-spacing: 1.5px; }
+        button#find-btn:disabled { background: #eee; color: #aaa; cursor: not-allowed; }
+        .intent-btn { cursor:pointer; border:1px solid #eee; padding:15px; margin:8px 0; border-radius:8px; font-size:0.85rem; background: white; width: 100%; text-align: left; line-height: 1.4; }
+        .final-match { margin-top: 25px; background: #fff; border-radius: 15px; display: none; border: 1px solid #f0e6d2; overflow: hidden; animation: fadeIn 0.8s ease forwards; text-align: left; }
+        .product-image { width: 100%; height: auto; display: block; background: #f9f9f9; }
+        .product-info { padding: 25px; }
+        .shopee-btn { background: var(--shopee); color: white; text-decoration: none; display: block; text-align: center; padding: 18px; border-radius: 8px; font-weight: 500; margin-top: 20px; text-transform: uppercase; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <img src="https://raw.githubusercontent.com/DNAcustom/NAVIGATOR/main/Logo2-DNA onlyU.png" class="brand-logo" alt="DNA Logo">
+    
+    <h1>SCENT NAVIGATOR for HMNS</h1>
+    <p class="subtitle">Pilih warna yang mewakili pribadimu.</p>
+
+    <div class="color-grid" id="colorGrid"></div>
+    <button id="find-btn" onclick="showResults()" disabled>LIHAT REKOMENDASI TERBAIK</button>
+
+    <div id="result-area" style="display:none; margin-top:30px;">
+        <div id="results-list"></div>
+        <button onclick="location.reload()" style="background:none; border:none; color:#121212; cursor:pointer; margin-top:30px; font-size: 0.9rem; text-transform: uppercase;">Mulai Ulang</button>
+    </div>
+</div>
+
+<script>
+    // Bagian script tetap sama seperti sebelumnya (Logic Produk, Images, & Affiliate)
+    const baseUrl = "https://raw.githubusercontent.com/DNAcustom/NAVIGATOR/main/";
+    
+    const productImages = {
+        'The Prestige': baseUrl + '1-Prestige.png',
+        'ORGSM': baseUrl + '2-Orgasm.png',
+        'Darker Shade of ORGSM': baseUrl + '3-Dark_Of_Orgasm.png',
+        'Addict': baseUrl + '4-Addict.png',
+        'Melting Temptation': baseUrl + '5-Melting_Temp.png',
+        'Essence of the Sun': baseUrl + '6-EoS.png',
+        'Untitled Humans 02': baseUrl + '7-Untitle02.png',
+        'Unrosed': baseUrl + '8-Unrosed.png',
+        'Philea': baseUrl + '9-Philea.png',
+        'Alpha': baseUrl + '10-Alpha.png',
+        'Ambar Janma': baseUrl + '11-AmbarJanma.png',
+        'The Perfection': baseUrl + '12-Perfection.png',
+        'Untitled Humans 01': baseUrl + '13-Untitle01.png',
+        'Elea': baseUrl + '14-Elea.png',
+        'Farhampton': baseUrl + '15-Farhampton.png',
+        'Unpatched': baseUrl + '16-Unpatched.png',
+        'SORE Žena': baseUrl + '17-SoreZena.png',
+        'SORE Eterna': baseUrl + '18-SoreEterna.png',
+        'My 1st O': baseUrl + '19-My1stO.png',
+        'Drops of Sunshine': baseUrl + '20-DoS.png'
+    };
+
+    const affiliateLinks = {
+        'The Prestige': 'https://s.shopee.co.id/4fpJXzTIFQ',
+        'ORGSM': 'https://s.shopee.co.id/8zyIh7xVqu',
+        'Darker Shade of ORGSM': 'https://s.shopee.co.id/6VGxiemPDs',
+        'Addict': 'https://s.shopee.co.id/AKTgHJqVs1',
+        'Melting Temptation': 'https://s.shopee.co.id/4q8jjmF7Nk',
+        'Essence of the Sun': 'https://s.shopee.co.id/gJAm2jeJJ',
+        'Untitled Humans 02': 'https://s.shopee.co.id/10w1BRY4d2',
+        'Unrosed': 'https://s.shopee.co.id/7pmLJQmJRy',
+        'Philea': 'https://s.shopee.co.id/8petYM7DPN',
+        'Alpha': 'https://s.shopee.co.id/2g4F91GMEO',
+        'Ambar Janma': 'https://s.shopee.co.id/4LCUCsHL7d',
+        'The Perfection': 'https://s.shopee.co.id/9UuZInUEk8',
+        'Untitled Humans 01': 'https://s.shopee.co.id/5q1GwFzLYf',
+        'Elea': 'https://s.shopee.co.id/4VVtLy53ed',
+        'Farhampton': 'https://s.shopee.co.id/AKTgHCkkPH',
+        'Unpatched': 'https://s.shopee.co.id/9pXPhDT4Vc',
+        'SORE Žena': 'https://s.shopee.co.id/6KxYZwGYFM',
+        'SORE Eterna': 'https://s.shopee.co.id/5VORaTwBdb',
+        'My 1st O': 'https://s.shopee.co.id/5L51OHKj9f',
+        'Drops of Sunshine': 'https://s.shopee.co.id/1VsIpLIsgS'
+    };
+
+    const stories = {
+        'The Prestige': 'Kamu adalah sosok dengan ambisi yang elegan. Dunia melihatmu sebagai orang yang kompeten dan berwibawa. Prestige menghadirkan sensasi percaya diri dan pencapaian. Dibuka dengan kesegaran grapefruit, lada merah muda yang berani, lalu berkembang ke inti nilam, geranium, dan orris yang mencerminkan kekuatan dan perjalanan hidup. Ditutup dengan kehangatan tolu, vetiver, dan labdanum, aroma ini meninggalkan kesan tenang, elegan, dan berkelas.',
+        'ORGSM': 'HMNS “O” adalah parfum wanita pertama kami yang menghadirkan aroma menggoda dan membangkitkan. Terinspirasi dari parfum wanita terlaris dunia, HMNS “O” menjadi rilisan global perdana dari Series Gen–XX. Dibuka dengan red apple, berlanjut ke floral mewah dari rose, jasmine, dan peony yang romantis, lalu ditutup dengan vanilla beans dan amber yang hangat, manis, dan seimbang.',
+        'Darker Shade of ORGSM': 'Di balik ketenanganmu, tersimpan kekuatan yang tak tergoyahkan. Kamu adalah seorang pelindung yang tangguh. Aroma ini menguatkan sisi misteriusmu yang sangat dominan. Sentuhan Vanilla Beans, Cedarwood, Amber, dan Vetiver di dasar aroma menghadirkan kesan mewah dan elegan, menjadikannya wewangian unik bagi mereka yang ingin tampil berbeda.',
+        'Addict': 'Energi positifmu adalah hadiah bagi orang di sekitar. Dalam sunyi malam, kehangatan aroma lembut membangkitkan kenangan. Awalnya, berry merah yang segar dan manis menyapa, lalu beralih ke mawar merah yang elegan dan romantis. Di akhir, patchouli, amber, dan tonka berpadu, meninggalkan jejak aroma yang hangat.',
+        'Melting Temptation': 'Kamu memiliki jiwa yang peka dan penuh keakraban. Kehadiranmu selalu dinanti karena kenyamanan yang kamu bawa. Bayangkan gigitan pertama dari karamel lembut, manis dan creamy. Kemudian hadir sentuhan apel segar dan pir juicy. Saat aroma ini mengalir lebih dalam, coklat pekat memberikan kenikmatan yang tak bisa kamu lupakan. Perlahan aromanya ditutup dengan vanilla yang creamy, amber, dan musk.',
+        'Essence of the Sun': 'Kamu adalah pemberi semangat, cahaya di tengah keraguan. Aroma ini memastikan energimu tetap terang dan segar sepanjang hari bagi orang-orang terdekat. Seri ini dibuka dengan aroma natural bergamot, coriander seeds, pink pepper. Berlanjut perpaduan tropical flower blends Indian Jasmine Sambac (natural), Turkish Rose (natural), Tiare Flower, dan solar accord. Diakhiri dengan wangi vanilla, absolute tonka bean (natural), ambrette, dan cedarwood pada base memberikan kesan creamy dan warm yang tahan lama.',
+        'Untitled Humans 02': 'Empatimu yang dalam membuatmu mampu melihat keindahan dalam setiap manusia. Kamu adalah pendengar yang tulus. Aroma ini merayakan jiwamu yang murni, lembut, dan humble. Dengan Absolute Rose yang lembut, berpadu dengan Musk Milk yang menenangkan. Saat keduanya bertemu, terciptalah wangi yang bukan hanya memikat, tapi juga terasa begitu personal. Lalu, ada sentuhan kecil dari Anise yang segar, Violet yang menambahkan kelembutan, Orris yang anggun, dan Cashmere yang menyatukan semuanya dalam harmoni sempurna.',
+        'Unrosed': 'Kamu adalah bukti bahwa keunikan tidak perlu berteriak untuk didengar. Kejujuranmu pada diri sendiri adalah inspirasi. Aroma ini adalah sebuah kreasi yang dibuat dengan teknik yang dikenal sebagai Soliflore. Seni menciptakan aroma satu bunga, tetapi bukan dari bunga itu sendiri. Diekstrak dari tanaman asli Indonesia yang disebut Palmarosa dan campuran lainnya untuk melengkapi keindahan mawar. Sehingga Anda bisa memiliki aroma mawar favorit Anda, dengan cara yang unik dan berbeda. Unrosed menyebarkan aksen bunga yang seimbang dengan aroma tanah yang sangat menenangkan. Diperkaya dengan sentuhan musk untuk menghadirkan jejak yang memukau.',
+        'Philea': 'Kedamaian adalah kekuatan terbesarmu. Kamu mampu membawa harmoni ke mana pun kamu pergi. Aroma ini adalah teman setia untuk momen refleksi dan ketenangan. Tapi dunia berputar dan kamu mungkin sedang menghadapi perubahan yang radikal. Bersama Tsana, kita menemukan bunga Mimosa. Ia menjelma menjadi aroma yang merayakan setiap keberhasilanmu sepanjang perjalanan yang penuh tantangan.',
+        'Alpha': 'Fokusmu tajam, prinsipmu kuat. Kamu tahu apa yang kamu inginkan. Aroma ini akan menjaga pikiranmu tetap jernih dan langkahmu tetap mantap sepanjang hari. Formulasi best seller dari HMNS ini lebih elegan, dibuka dengan aroma citrus & grass, diikuti cedarwood dan green tea essence. Dengan karakter wangi yang fresh & calming, Alpha adalah varian pertama yang menjadi the origin of HMNS.',
+        'Ambar Janma': 'Kamu membawa warisan karakter yang megah dan mewah. Kehadiranmu terasa sakral dan penuh hormat. Aroma ini adalah jembatan antara tradisi dan modernitas dalam dirimu. Jika kamu ingin mengikuti pengalaman yang berbeda dan berani, cobalah Experience the scent of Ambar Janma si “Manusia Harum”. Ini adalah parfum pertama dan satu-satunya di dunia yang dibuat dengan teknologi The Impossible ScentTM. Ambar (Layer Pertama) memiliki sifat yang mengikat dengan kulit dan memiliki karakter yang elegant dari sandalwood, amber, suede, dan Gayo Patchoulli. Sementara Janma (Layer kedua) adalah yang akan menciptakan harmonisasi aroma yang memiliki sebaran yang jauh. Kombinasi keduanya menghadirkan wangi yang mewah dari Bulgarian Rose, neroli, pink pepper, dan black tea.',
+        'The Perfection': 'Standarmu tinggi karena kamu percaya pada kualitas. Ketelitianmu adalah sebuah karya seni. Aroma ini adalah varian yang dipersembahkan oleh HMNS & Christian Sugiono. Memiliki karakter Spicy – Fougere yang mewah dan bersih. “Bayangkan kamu melakukan sesuatu berulang kali hingga seratus kali lebih, itulah yang telah kami lalui, untuk mencapai hal yang hebat dan akhirnya menemukan sesuatu yang kami sebut Kesempurnaan”.',
+        'Untitled Humans 01': 'Kecerdasanmu terletak pada caramu mengamati dunia. Kamu tenang, namun pikiranmu bekerja dengan luar biasa. Aroma ini memberikan ruang bagi sisi intelektualmu untuk bersinar. "Because you are too complex to be labeled". Parfum ini adalah bentuk kebebasan ekspresi diri kamu tanpa memerlukan label dari orang lain.',
+        'Elea': 'Seperti kelembutan yang sulit diungkapkan dan itu hanya ada dalam dirimu. Kamu mencari keseimbangan antara dunia luar dan ketenangan dalam. Aroma ini adalah transisi sempurna menuju harimu yang damai. Sebuah perpaduan kesegaran jeruk bali dan magnolia yang membangkitkan semangat. Dengan madu emas yang manis dan ambrette yang menyenangkan untuk menghadirkan keajaiban baru.',
+        'Farhampton': 'Kamu adalah jiwa romantis yang menghargai kedalaman emosi. Bagimu, setiap pertemuan adalah cerita. Farhampton mirip belahan jiwa. Seseorang yang kau temukan di sepanjang perjalanan dan akan tetap bersamamu hingga akhir.” Dengan konsentrasi pure fragrance tinggi (extrait de parfum). Wanginya diawali dengan bergamot dan ripe fruit, diikuti dengan lavender dan bunga orange blossom yang memberikan kesan aromatic dan spicy. Sebagai penghujung, hadir labdanum, cedar wood, dan tonka bean untuk memberikan kesan hangat.',
+        'Unpatched': 'Karaktermu begitu tersembunyi dan sulit ditebak, membuat orang selalu ingin tahu tentangmu. Kamu mandiri dan sangat berkelas. Pejamkan mata dan tarik napas. Mulailah dengan kehangatan Vanilla Madagascar yang menyelimuti. Sesaat kemudian muncul Akigalawood, sentuhan unik yang beraroma tanah agar kamu tetap terhubung dengan alam. Mawar menambahkan jejak romansa abadi dan penuh misteri, tarian cahaya dan bayangan.',
+        'SORE Žena': 'Terinspirasi dari kata Žena, yang artinya “istri”. Seperti rasa cinta Sore yang hangat dan manis kepada Jonathan, sebagai seorang istri yang datang dari masa depan. Diawali dengan aroma manis dan ceria dari Mandarin, Nanas, dan Santan. Dan diakhiri dengan aroma lembut dan kayu dari Vanila, Kayu Cendana, dan Kayu Cedar Virginia.',
+        'SORE Eterna': 'Ada sesuatu dalam dirimu yang terasa abadi—hening dan menenangkan. Aroma ini dirancang untuk kamu yang menghargai memori dan keteguhan karakter yang tak lekang waktu. Terinspirasi dari kata Eterna, yang artinya “selamanya”. Diawali dengan wangi citrus yang segar dari Bergamot, Orange dan Petit Grain. Dilanjutkan dengan wangi floral yang hangat dari Ylang-ylang, Rose dan Peach. Lalu diakhiri dengan wangi woody dari Cedarwood, Musk, dan Sandalwood.',
+        'My 1st O': 'Kamu adalah awal dari sebuah cerita baru yang penuh kejutan. Aroma ini menangkap kesan pertama yang segar, berani, dan takkan pernah bisa dilupakan oleh siapapun yang berpapasan denganmu. Perpaduan hair mist & body mist yang diformulasi dengan varian parfum HMNS terlaris: Orgsm. Disilangkan dengan Raspberry yang memberikan kesan fresh & Trehalose yang membuat rambut tidak kering. My 1st O hadir dengan aroma pertama Peach Blossom, Raspberry dan Fresh Orange yang memberikan kesan segar. Lalu Woody Ambery, Caramel & Vanilla memberikan kesan manis namun tetap seimbang.',
+        'Drops of Sunshine': 'Kehadiranmu seperti sinar matahari setelah hujan; hangat dan membangkitkan harapan. Aroma ini adalah dorongan energi optimis untuk memastikan harimu selalu cerah. Terinspirasi oleh keindahan sang surya, EᴼS. Ini adalah wewangian oriental floral, creamy gourmand. Awalnya dibuka dengan aroma Ketumbar yang menyegarkan. Seiring berjalannya waktu, disusul Melati yang bermekaran. Di penghujung hari, jejaknya terbentang dengan aksen Vanili yang nyaman dan menyenangkan.'
+    };
+
+    const data = [
+        { id: 'red', name: 'Crimson', hex: '#8B0000', options: [
+            { intent: 'Ingin tampil profesional & berambisi', product: 'The Prestige' },
+            { intent: 'Ingin tampil memikat & penuh semangat', product: 'ORGSM' },
+            { intent: 'Ingin kesan pertama tak terlupakan', product: 'My 1st O' }
+        ]},
+        { id: 'orange', name: 'Coral', hex: '#FF7F50', options: [
+            { intent: 'Ingin energi ceria & penuh kesenangan', product: 'Addict' },
+            { intent: 'Ingin pancaran kehangatan matahari', product: 'Essence of the Sun' },
+            { intent: 'Ingin dorongan energi optimis', product: 'Drops of Sunshine' }
+        ]},
+        { id: 'yellow', name: 'Gold', hex: '#FFD700', options: [
+            { intent: 'Ingin ketenangan batin yang tulus', product: 'Unrosed' },
+            { intent: 'Ingin kesan kalem penuh kenyamanan', product: 'Melting Temptation' },
+            { intent: 'Ingin damai & penuh kehangatan', product: 'Philea' }
+        ]},
+        { id: 'green', name: 'Olive', hex: '#556B2F', options: [
+            { intent: 'Ingin tampil bersih & jujur', product: 'Alpha' },
+            { intent: 'Ingin kesan yang abadi & humble', product: 'SORE Eterna' },
+            { intent: 'Ingin profesionalitas sempurna', product: 'The Perfection' }
+        ]},
+        { id: 'blue', name: 'Navy', hex: '#1a3a5f', options: [
+            { intent: 'Ingin ketenangan yang sesungguhnya', product: 'Untitled Humans 01' },
+            { intent: 'Ingin kelembutan menyegarkan', product: 'Elea' },
+            { intent: 'Ingin tampil cerdas & berkelas', product: 'The Perfection' }
+        ]},
+        { id: 'purple', name: 'Plum', hex: '#4B0082', options: [
+            { intent: 'Ingin tampil lembut & penuh perhatian', product: 'Untitled Humans 02' },
+            { intent: 'Ingin kesan romantis mendalam', product: 'Farhampton' },
+            { intent: 'Ingin aura feminin elegan', product: 'SORE Žena' }
+        ]},
+        { id: 'black', name: 'Charcoal', hex: '#1a1a1a', options: [
+            { intent: 'Ingin tampil megah & mewah', product: 'Ambar Janma' },
+            { intent: 'Ingin kesan dominan & kuat', product: 'Darker Shade of ORGSM' },
+            { intent: 'Ingin kedalaman karakter misterius', product: 'Unpatched' }
+        ]},
+        { id: 'grey', name: 'Silver', hex: '#bdc3c7', options: [
+            { intent: 'Sederhana tanpa basa-basi', product: 'Untitled Humans 01' },
+            { intent: 'Elegan tanpa banyak bicara', product: 'The Perfection' },
+            { intent: 'Fokus pada kejernihan nurani & pikiran', product: 'Alpha' }
+        ]},
+        { id: 'white', name: 'Pearl', hex: '#ffffff', options: [
+            { intent: 'Ingin kemurnian & kejujuran', product: 'Unrosed' },
+            { intent: 'Ingin awal yang baru & segar', product: 'Elea' },
+            { intent: 'Ingin kesempurnaan yang indah', product: 'The Perfection' }
+        ]}
+    ];
+
+    let selectedId = null;
+    const grid = document.getElementById('colorGrid');
+    const btn = document.getElementById('find-btn');
+
+    data.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'color-item';
+        div.onclick = function() {
+            const allItems = document.querySelectorAll('.color-item');
+            for(let i=0; i<allItems.length; i++) {
+                allItems[i].classList.remove('selected');
+            }
+            selectedId = item.id;
+            div.classList.add('selected');
+            btn.disabled = false;
+        };
+        div.innerHTML = '<div class="color-circle" style="background-color: ' + item.hex + '"></div><div class="color-label">' + item.name + '</div>';
+        grid.appendChild(div);
+    });
+
+    function showResults() {
+        const list = document.getElementById('results-list');
+        list.innerHTML = '<p style="text-align:center; font-size:1.2rem; color:#666; margin-bottom:20px;">Pilih fokus energimu hari ini:</p>';
+        
+        let selectedData = null;
+        for(let i=0; i<data.length; i++) {
+            if(data[i].id === selectedId) {
+                selectedData = data[i];
+                break;
+            }
+        }
+
+        selectedData.options.forEach(opt => {
+            const button = document.createElement('button');
+            button.className = 'intent-btn';
+            button.innerHTML = opt.intent + ' <span style="float:right">→</span>';
+            button.onclick = function() {
+                const allIntents = document.querySelectorAll('.intent-btn');
+                for(let j=0; j<allIntents.length; j++) {
+                    allIntents[j].style.display = 'none';
+                }
+                selectFinal(opt.product);
+            };
+            list.appendChild(button);
+        });
+
+        const finalDiv = document.createElement('div');
+        finalDiv.id = 'final-match-container';
+        finalDiv.className = 'final-match';
+        list.appendChild(finalDiv);
+        document.getElementById('result-area').style.display = 'block';
+    }
+
+    function selectFinal(product) {
+        const display = document.getElementById('final-match-container');
+        const sLink = affiliateLinks[product] || 'https://shopee.co.id';
+        const imgUrl = productImages[product];
+        const storyText = stories[product] || "Aroma yang tepat untuk Anda.";
+
+        display.innerHTML = `
+            <img src="${imgUrl}" class="product-image" alt="${product}" onerror="this.src='https://placehold.co/500x500?text=Check+Image+URL'">
+            <div class="product-info">
+                <div style="font-size:0.7rem; color:var(--accent); font-weight:bold; letter-spacing:2px; margin-bottom:12px; text-transform:uppercase;">THE SOUL STORY</div>
+                <p style="font-size:1rem; line-height:1.7; color:#444; margin-bottom:25px; font-family: 'Georgia', serif; font-style: italic;">"${storyText}"</p>
+                <div style="border-top: 1px solid #eee; padding-top: 20px;">
+                    <h2 style="margin:5px 0 20px 0; font-size:1.6rem; letter-spacing:1px;">HMNS ${product}</h2>
+                    <a href="${sLink}" target="_blank" class="shopee-btn">Amankan Wangimu di Shopee</a>
+                </div>
+            </div>
+        `;
+        display.style.display = 'block';
+        setTimeout(() => { display.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 150);
+    }
+</script>
+</body>
+</html>
